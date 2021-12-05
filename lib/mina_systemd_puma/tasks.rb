@@ -18,7 +18,8 @@ set :user, 'username'
 namespace :puma do
   desc "Init systemd units"
   task :install do
-    template_service = %{
+    run :remote do
+      template_service = %{
 [Unit]
 Description=Puma HTTP Server
 After=network.target
@@ -66,10 +67,12 @@ WantedBy=sockets.target
     comment %{Enabling services }
     command %{ #{ fetch(:sysctl_cmd) } enable #{ socket_path } }
     command %{ #{ fetch(:sysctl_cmd) } enable #{ service_path } }
+    end
   end
 
   desc "Remove units"
   task :uninstall do
+    run :remote do
     command %{ #{ fetch(:sysctl_cmd) } disable #{fetch(:puma_service_name)} }
     command %{ sudo rm #{File.join(fetch(:systemd_unit_path), fetch(:puma_service_name))}  }
 
@@ -78,37 +81,49 @@ WantedBy=sockets.target
 
     comment %{Reloading systemctl daemon}
     command %{ #{ fetch(:sysctl_cmd) } daemon-reload }
-
+    end
   end
 
   desc "Check puma state"
-  task :state => :remote_environment do
+  task :state => :remote_environment do 
+    run :remote do    
     command %{cd #{fetch(:current_path)} && #{fetch(:puma_status)} #{fetch(:puma_state)} }
+    end
   end
 
   desc "Check puma.service status"
   task :status => :remote_environment do
+    run :remote do
     command %{ #{ fetch(:sysctl_cmd) } status #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
+    end
   end
 
   desc "Start puma.service and puma.socket"
-  task :start => :remote_environment do
+  task :start => :remote_environment 
+    do run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } start #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
+    end
   end
 
   desc "Stop puma.service and puma.socket"
-  task :stop => :remote_environment do
+  task :stop => :remote_environment 
+    do run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } stop #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
+    end
   end
 
   desc "Restart puma.service "
-  task :restart => :remote_environment do
+  task :restart => :remote_environment 
+    do run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } restart #{fetch(:puma_service_name)} }
+    end
   end
 
   desc "Restart puma.service and puma.socket"
-  task :hard_restart => :remote_environment do
+  task :hard_restart => :remote_environment 
+    do run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } restart #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
+    end
   end
 
 end
