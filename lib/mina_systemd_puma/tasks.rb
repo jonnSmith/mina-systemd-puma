@@ -29,7 +29,7 @@ Requires=#{ fetch(:puma_socket_name) }
 Type=simple
 User=#{ fetch(:user) }
 WorkingDirectory=#{ fetch(:deploy_to) }
-ExecStart=/bin/bash {fetch(:system_bundler)} exec #{fetch(:puma_binary_id)} -d -c #{fetch(:puma_config)}
+ExecStart="#{fetch(:system_bundler)} exec #{fetch(:puma_binary_id)} -d -c #{fetch(:puma_config)}"
 Restart=on-failure
 RestartSec=5
 
