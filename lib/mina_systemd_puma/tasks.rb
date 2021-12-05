@@ -1,5 +1,5 @@
-set :puma_status, -> { "#{fetch(:bundle_bin)} exec puma-status" }
-set :puma_state,  -> { "#{fetch(:current_path)}/tmp/sockets/puma.state" }
+set :puma_status, -> { "#{fetch(:deploy_to)} exec puma-status" }
+set :puma_state,  -> { "#{fetch(:deploy_to)}/tmp/sockets/puma.state" }
 set :puma_config, -> { "#{fetch(:deploy_to)}/shared/config/puma.rb" }
 set :puma_sock,   -> { "#{fetch(:deploy_to)}/shared/tmp/sockets/puma.sock" }
 
@@ -7,9 +7,11 @@ set :puma_application_name, 'puma'
 set :puma_service_name, -> { "#{fetch(:puma_application_name)}.service" }
 set :puma_socket_name,  -> { "#{fetch(:puma_application_name)}.socket" }
 
+set :puma_binary_id, 'pumactl'
+
 set :sysctl_cmd,        'sudo systemctl'
 set :systemd_unit_path, '/etc/systemd/system'
-set :system_bundler,    -> { "/home/#{fetch(:user)}/.rbenv/bin/rbenv exec bundle" }
+set :system_bundler, "#{ fetch(:deploy_to) } exec bundle"
 
 set :user, 'username'
 
@@ -25,8 +27,8 @@ Requires=#{ fetch(:puma_socket_name) }
 [Service]
 Type=simple
 User=#{ fetch(:user) }
-WorkingDirectory=#{ fetch(:current_path) }
-ExecStart=#{fetch(:system_bundler)} exec  #{fetch(:puma_service_name)} -d -c #{fetch(:puma_config)}
+WorkingDirectory=#{ fetch(:deploy_to) }
+ExecStart=#{fetch(:system_bundler)} exec #{fetch(:puma_binary_id)} -d -c #{fetch(:puma_config)}
 Restart=never
 
 [Install]
