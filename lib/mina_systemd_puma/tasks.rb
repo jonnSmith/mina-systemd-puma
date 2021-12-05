@@ -1,6 +1,6 @@
 set :puma_status, -> { "#{fetch(:deploy_to)} exec puma-status" }
 set :puma_state,  -> { "#{fetch(:deploy_to)}/tmp/sockets/puma.state" }
-set :puma_config, -> { "#{fetch(:deploy_to)}/shared/config/puma.rb" }
+set :puma_config, -> { " -c #{fetch(:deploy_to)}/shared/config/puma.rb -d" }
 set :puma_sock,   -> { "#{fetch(:deploy_to)}/shared/tmp/sockets/puma.sock" }
 
 set :puma_application_name, 'puma'
