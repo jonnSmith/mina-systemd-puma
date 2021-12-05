@@ -99,29 +99,29 @@ WantedBy=sockets.target
   end
 
   desc "Start puma.service and puma.socket"
-  task :start => :remote_environment 
-    do run :remote do    
+  task :start => :remote_environment do
+    run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } start #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
     end
   end
 
   desc "Stop puma.service and puma.socket"
-  task :stop => :remote_environment 
-    do run :remote do    
+  task :stop => :remote_environment do
+    run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } stop #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
     end
   end
 
   desc "Restart puma.service "
-  task :restart => :remote_environment 
-    do run :remote do    
+  task :restart => :remote_environment do
+    run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } restart #{fetch(:puma_service_name)} }
     end
   end
 
   desc "Restart puma.service and puma.socket"
-  task :hard_restart => :remote_environment 
-    do run :remote do    
+  task :hard_restart => :remote_environment do
+    run :remote do    
     command %{ #{ fetch(:sysctl_cmd) } restart #{fetch(:puma_socket_name)} #{fetch(:puma_service_name)} }
     end
   end
