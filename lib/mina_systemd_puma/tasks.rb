@@ -11,6 +11,8 @@ set :sysctl_cmd,        'sudo systemctl'
 set :systemd_unit_path, '/etc/systemd/system'
 set :system_bundler,    -> { "/home/#{fetch(:user)}/.rbenv/bin/rbenv exec bundle" }
 
+set user, 'username'
+
 namespace :puma do
   desc "Init systemd units"
   task :install do
@@ -22,7 +24,7 @@ Requires=#{ fetch(:puma_socket_name) }
 
 [Service]
 Type=simple
-User=ubuntu
+User=#{ fetch(:user) }
 WorkingDirectory=#{ fetch(:current_path) }
 ExecStart=#{fetch(:system_bundler)} exec puma -C #{fetch(:puma_config)}
 Restart=always
