@@ -11,7 +11,7 @@ set :sysctl_cmd,        'sudo systemctl'
 set :systemd_unit_path, '/etc/systemd/system'
 set :system_bundler,    -> { "/home/#{fetch(:user)}/.rbenv/bin/rbenv exec bundle" }
 
-set user, 'username'
+set :user, 'username'
 
 namespace :puma do
   desc "Init systemd units"
