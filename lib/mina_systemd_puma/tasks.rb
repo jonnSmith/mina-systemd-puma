@@ -29,7 +29,8 @@ Type=simple
 User=#{ fetch(:user) }
 WorkingDirectory=#{ fetch(:deploy_to) }
 ExecStart=#{fetch(:system_bundler)} exec #{fetch(:puma_binary_id)} -d -c #{fetch(:puma_config)}
-Restart=never
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
