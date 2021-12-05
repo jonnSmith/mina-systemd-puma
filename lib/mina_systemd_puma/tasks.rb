@@ -26,8 +26,8 @@ Requires=#{ fetch(:puma_socket_name) }
 Type=simple
 User=#{ fetch(:user) }
 WorkingDirectory=#{ fetch(:current_path) }
-ExecStart=#{fetch(:system_bundler)} exec puma -C #{fetch(:puma_config)}
-Restart=always
+ExecStart=#{fetch(:system_bundler)} exec  #{fetch(:puma_service_name)} -d -c #{fetch(:puma_config)}
+Restart=never
 
 [Install]
 WantedBy=multi-user.target
@@ -40,8 +40,8 @@ Description=Puma HTTP Server Accept Sockets
 [Socket]
 ListenStream=#{ fetch(:puma_sock) }
 
-NoDelay=true
-ReusePort=true
+NoDelay=false
+ReusePort=false
 Backlog=1024
 
 [Install]
