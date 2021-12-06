@@ -13,7 +13,12 @@ set :sysctl_cmd,        'sudo systemctl'
 set :systemd_unit_path, '/etc/systemd/system'
 set :system_bundler, "#{ fetch(:deploy_to) } exec bundle"
 
-set :user, 'username'
+set :puma_unit_user, 'puma'
+set :puma_unit_type, 'exec'
+set :puma_unit_delay, '5'
+set :puma_unit_kill_mode, 'mixed'
+set :puma_unit_restart_mode, 'on-failure'
+set :puma_unit_wanted, 'multi-user.target'
 
 namespace :puma do
   desc "Init systemd units"
@@ -25,15 +30,18 @@ After=network.target
 Requires=#{ fetch(:puma_socket_name) }
 
 [Service]
-Type=simple
-User=#{ fetch(:user) }
-WorkingDirectory=#{ fetch(:deploy_to) }
-ExecStart=#{fetch(:system_bundler)} exec #{fetch(:puma_binary_id)} -d -c #{fetch(:puma_config)}
-Restart=on-failure
-RestartSec=5
+  Type=#{ fetch(:puma_unit_type) }
+  User=#{ fetch(:puma_unit_user) }
+  WorkingDirectory=#{ fetch(:deploy_to) }
+  ExecStart=#{fetch(:system_bundler)} exec #{fetch(:puma_binary_id)}  -c #{fetch(:puma_config)}
+  ExecReload=/bin/pkill #{fetch(:puma_application_name)}
+  ExecStop=/bin/pkill #{fetch(:puma_application_name)}
+  Restart=#{ fetch(:puma_unit_restart_mode) }
+  RestartSec=#{ fetch(:puma_unit_delay) }
+  KillMode=#{ fetch(:puma_unit_kill_mode) }
 
-[Install]
-WantedBy=multi-user.target
+  [Install]
+  WantedBy=#{ fetch(:puma_unit_wanted) }
 }
 
     template_socket = %{
